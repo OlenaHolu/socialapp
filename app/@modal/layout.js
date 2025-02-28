@@ -24,14 +24,27 @@ export default function Modal({ children }) {
         }
     }
 
-    return(
+    return (
         <>
-            <dialog className="backdrop:bg-gray-900 backdrop:opacity-50 rounded shadow-md" ref={dialogRef} onClose={onDismiss} onClick={closeModal}>
-                <span onClick={onDismiss} className='absolute top-1 right-2 p-1 hover:bg-gray-300 cursor-pointer'>x</span>
-                <div className="min-h-[200px] bg-[#0a0a0a] text-white p-8" >
+            <dialog 
+                ref={dialogRef} 
+                className="backdrop:bg-gray-700 backdrop:opacity-50 rounded-lg shadow-lg p-4 flex justify-center items-center"
+                onClose={onDismiss} 
+                onClick={closeModal}
+            >
+                <div className="relative bg-[#0a0a0a] text-white p-6 w-[80vw] h-[80vh] max-w-[700px] max-h-[600px] overflow-y-auto rounded-lg">
+                    {/* Botón de cerrar */}
+                    <button 
+                        onClick={onDismiss} 
+                        className="absolute top-2 right-3 p-2 bg-gray-600 text-white rounded-full hover:bg-gray-400 transition"
+                    >
+                        ✖
+                    </button>
+
+                    {/* Contenido del modal */}
                     {children}
                 </div>
             </dialog>
         </>
-   )
+    );
 }

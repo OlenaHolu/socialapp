@@ -6,9 +6,9 @@ import { updateProfile } from "../lib/actions";
 import Image from "next/image";
 
 export default function ProfileForm({ user }) {
+
     const router = useRouter();
     const [formState, formAction] = useActionState(updateProfile, { success: null, message: null, errors: {} });
-    const [picture, setPicture] = useState("/preview.png");
 
     useEffect(() => {
         if (formState.success) {
@@ -16,12 +16,15 @@ export default function ProfileForm({ user }) {
         }
     }, [formState.success]);
 
-    function preview(ev){
-        setPicture(URL.createObjectURL(ev.target.files[0]));
-}
+    const [imageUrl, setImageUrl] = useState(user.picture);
+
+    function preview(ev) {
+        setImageUrl(URL.createObjectURL(ev.target.files[0]));
+    }
+
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
+        <div className="flex flex-col items-center gap-16 w-full">
             <h1 className="text-2xl font-bold text-center">Editar Perfil</h1>
 
             {formState.message && (
@@ -33,11 +36,17 @@ export default function ProfileForm({ user }) {
             <form action={formAction} className="flex flex-col gap-8">
                 <input type="hidden" name="user_id" value={user.user_id} />
 
-                    <label htmlFor="myfs">
-                        <Image id="ima" src={picture} width={256} height={256} alt="preview" />
-                    </label>
-                    <input id="myfs" type="file" name="media" hidden onChange={preview} required />
-            
+                <label htmlFor="myfs">
+                    <Image 
+                        id="ima" 
+                        src={imageUrl} 
+                        width={300} 
+                        height={300} 
+                        alt="preview"
+                        className="rounded-full" />
+                </label>
+                <input id="myfs" type="file" name="media" hidden onChange={preview} />
+
 
                 <input
                     type="text"

@@ -80,31 +80,46 @@ export async function formatTimeAgo(date) {
     return "hace unos segundos";
 }
 export async function updateProfile(formData) {
+    console.log("Datos de formdata: ", formData);
     try {
-        console.log(formData);
         const user_id = formData.get("user_id");
         const username = formData.get("username");
         const name = formData.get("name");
         const email = formData.get("email");
-        const { url } = await put(
-            'media', 
-            formData.get("media"),
-            { access: 'public' }
-        );
+        const media = formData.get("media"); // Puede ser null si el usuario no cambia la imagen
 
         // Validaciones básicas
         if (!user_id || !username || !name || !email) {
             return { success: false, message: "Todos los campos son obligatorios", errors: {} };
         }
 
-        // Actualizar en la base de datos
+        // Si el usuario sube una nueva imagen, procesarla
+        let picture = null;
+        if (media && media.size > 0) {  // Evitar subir si no hay nueva imagen
+            try {
+                const uploadResult = await put(
+                    "media",
+                    media,
+                    { access: "public" }
+                );
+                if (uploadResult?.url) {
+                    picture = uploadResult.url; // Guardamos la nueva URL
+                    console.log("Imagen subida con éxito:", picture);
+                }
+            } catch (error) {
+                console.error("Error al subir imagen:", error);
+                return { success: false, message: "Error al subir imagen 🚨", errors: {} };
+            }
+        }
+
+        // Actualizar en la base de datos, conservando la imagen anterior si no hay nueva
         await sql`
             UPDATE sa_users
             SET 
                 username = ${username}, 
                 name = ${name},
                 email = ${email}, 
-                picture = ${url}
+                picture = COALESCE(${picture}, picture) -- Mantener imagen anterior si no hay nueva
             WHERE user_id = ${user_id}
         `;
 

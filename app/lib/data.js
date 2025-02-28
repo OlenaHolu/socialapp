@@ -24,6 +24,7 @@ export async function getPosts() {
             sa_posts.user_id, 
             username,
             picture
+        ORDER BY created_at DESC
         `).rows;
 }
 
@@ -31,7 +32,7 @@ export async function getLikes(user_id) {
     return (await sql`SELECT post_id FROM sa_likes WHERE user_id = ${user_id}`).rows;
 }
 
-export async function getPost(post_id){
+export async function getPost(post_id) {
     return (await sql
         `
         SELECT
@@ -59,7 +60,7 @@ export async function getPost(post_id){
         `).rows;
 }
 
-export async function getLike(user_id, post_id){
+export async function getLike(user_id, post_id) {
     return (await sql`
         SELECT post_id FROM sa_likes WHERE user_id = ${user_id} AND post_id=${post_id}
     `).rows;
@@ -74,7 +75,7 @@ export async function getComments(post_id) {
     `;
 
     const commentMap = new Map();
-    
+
     // Crear un mapa de comentarios por ID
     comments.rows.forEach((comment) => {
         comment.replies = []; // Inicializar respuestas
@@ -104,4 +105,28 @@ export async function getProfile(user_id) {
         FROM sa_users 
         WHERE user_id = ${user_id}
     `).rows[0];
+}
+
+export async function getCommentedPosts(user_id) {
+    return (await sql`
+            SELECT DISTINCT p.post_id, p.content, p.url, p.created_at, u.username, u.picture,
+                (SELECT COUNT(*) FROM sa_likes WHERE sa_likes.post_id = p.post_id) AS num_likes
+            FROM sa_comments c
+            JOIN sa_posts p ON c.post_id = p.post_id
+            JOIN sa_users u ON p.user_id = u.user_id
+            WHERE c.user_id = ${user_id}
+            ORDER BY p.created_at DESC
+    `);
+}
+
+export async function getlikedPosts(user_id) {
+    return (await sql`
+            SELECT p.post_id, p.content, p.url, p.created_at, u.username, u.picture,
+                (SELECT COUNT(*) FROM sa_likes WHERE sa_likes.post_id = p.post_id) AS num_likes
+            FROM sa_likes l
+            JOIN sa_posts p ON l.post_id = p.post_id
+            JOIN sa_users u ON p.user_id = u.user_id
+            WHERE l.user_id = ${user_id}
+            ORDER BY p.created_at DESC
+    `);
 }
