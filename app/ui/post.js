@@ -1,37 +1,48 @@
 import { ChatBubbleLeftIcon, HeartIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import LikeButton from "./like-button";
 
-export default ({content, url}) => {
+export default ({
+    post_id, 
+    user_id, 
+    content, 
+    url, 
+    isLikedInitial, 
+    username,
+    num_likes 
+}) => {
     return (
         <div className="flex flex-col max-w-sm gap-2">
-            <div className="flex gap-2">
+           <div className="flex gap-2">
                 <Image src="/avatar.jpg"
                     className="rounded-full"
                     width={24}
                     height={24}
                     alt="avatar"
                 />
-                <span>simtegame</span>
+                <span>{username}</span>
                 <span>1 dia</span>
             </div>
 
             <div>
-                <Image src={url}
+            <Link href={`/post/${post_id}`}>
+                <Image src={url} 
+                    alt="hola"
                     className=""
                     width={384}
                     height={384}
-                    alt="post"
                 />
-            </div>
+            </Link>
+           </div>
 
             <div>
                 <div className="flex gap-2">
-                    <HeartIcon className="w-8" />
+                    <LikeButton post_id={post_id} user_id={user_id} isLikedInitial={isLikedInitial}/>
                     <ChatBubbleLeftIcon className="w-8" />
                 </div>
                 <div>
-                    <span>2654 Me gusta</span>
+                    <span>{num_likes}</span>
                 </div>
             </div>
 

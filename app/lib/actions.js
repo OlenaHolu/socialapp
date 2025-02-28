@@ -2,8 +2,13 @@
 
 import { put } from "@vercel/blob"
 import { sql } from "@vercel/postgres"
+import { auth0, uid } from "./auth0";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createPost(formData) {
+    const user_id = (await auth0.getSession()).user.user_id;
+
     const { url } = await put(
         'media', 
         formData.get("media"),
@@ -11,10 +16,28 @@ export async function createPost(formData) {
     );
     const content = formData.get('content');
 
-    await sql `INSERT INTO POSTS(content, url) 
+    await sql `INSERT INTO sa_POSTS(content, url, user_id) 
         VALUES(
             ${content}, 
-            ${url}
+            ${url},
+            ${user_id}
     )`
 
+    revalidatePath('/');
+    redirect('/');
+
+}
+
+export async function insertLike(post_id, user_id) {
+    await sql `INSERT INTO sa_likes(post_id, user_id) 
+        VALUES(
+            ${post_id}, 
+            ${user_id}
+    )`
+}
+
+export async function deleteLike(post_id, user_id) {
+    await sql `DELETE FROM sa_likes
+        WHERE post_id = ${post_id} AND user_id = ${user_id}
+    `
 }

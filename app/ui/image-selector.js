@@ -14,9 +14,10 @@ export default () => {
     return(
         <>
             <label htmlFor="myfs">
-                <Image src={imageUrl} width={256} height={256} alt="preview"/>
+                <Image id='ima' src={imageUrl} width={256} height={256} alt="preview"/>
             </label>
-            <input id="myfs" type="file" name="media" hidden onChange={preview} />
+            <input id="myfs" type="file" name="media" hidden onChange={preview} required />
         </>
     )
 }
+

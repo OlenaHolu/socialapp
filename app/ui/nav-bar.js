@@ -1,22 +1,23 @@
+'use client'
+
 import NavLink from '@/app/ui/nav-link'
-import {
-    HomeIcon,
-    MagnifyingGlassIcon,
-    ChatBubbleLeftIcon,
-    PlusCircleIcon,
-    UserCircleIcon
-} from '@heroicons/react/24/outline';
+import { ArrowRightStartOnRectangleIcon, ArrowsRightLeftIcon, HomeIcon, MagnifyingGlassIcon, PlusCircleIcon, UserIcon } 
+from '@heroicons/react/24/solid'
 
 
 export default () => {
-
+    
     return (
-        <nav className="flex flex-col gap-4 h-dvh border-e p-2">
-            <p className="hidden sm:block">SocialApp</p>
-            <NavLink ruta="/" texto="Home" icon={<HomeIcon className="w-6 h-6" />} />
-            <NavLink ruta="/search" texto="Search" icon={<MagnifyingGlassIcon className="w-6 h-6" />} />
-            <NavLink ruta="/create" texto="Create" icon={<PlusCircleIcon className="w-6 h-6" />} />
-            <NavLink ruta="/profile" texto="Profile" icon={<UserCircleIcon className="w-6 h-6" />} />
+        <nav className="flex flex-col gap-4 h-dvh border-e p-4 pr-8 fixed" >
+            <p className='hidden sm:block text-xl italic'>SocialApp</p>
+            
+            <NavLink ruta="/" texto="Home" icon={ HomeIcon }></NavLink>
+            <NavLink ruta="/search" texto="Search" icon={MagnifyingGlassIcon}></NavLink>
+            <NavLink ruta="/create" texto="Create" icon={PlusCircleIcon}></NavLink>
+            <NavLink ruta="/profile" texto="Profile" icon={UserIcon}></NavLink>
+
+            <a href="/auth/logout" className='flex gap-2 mt-8'><ArrowRightStartOnRectangleIcon className='w-4'/>Sign out</a>
         </nav>
-    );
-};
+    )
+
+}
